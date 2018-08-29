@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>我的导航页面</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <header></header>	
+	<main>
+		<div class="wrapper" id="main">
+			
+		</div>
+	</main>
+    <footer></footer>
+    <script>
+        
+        //初始化数据
+        var hashA = init()
+		var keys = hashA['keys']
+		var hash = hashA['hash']
+
+        // 取出 localStorage 中的 zzz 对应的 hash;
+        //这个要放在生成键盘之前，是为了刷新页面后图片和网址和上一次访问一样，不返回到初始一样，否则，图片回到初始，网址不变。
+        var hashInLocalStorage = getFromLocalStorage('zzz') 
+			if(hashInLocalStorage){
+				hash = hashInLocalStorage
+            }
+
+        //生成键盘
+        //遍历keys,创建kbd
+        for(var index = 0;index< keys['length'];index = index+1){
+            var div=tag('div')
+            div.className='row'
+            main.appendChild(div)
+            var row=keys[index]
+            for(var index2=0;index2<row['length'];index2 = index2+1){
+                var kbd=tag('kbd')
+                kbd.className='key'
+
+                var span=createSpan(row[index2])
+                
+                var button=createButton(row[index2])
+                
+                var img=createImage(hash[row[index2]])
+            
+                kbd.appendChild(span)
+				kbd.appendChild(img)
+				kbd.appendChild(button)
+				div.appendChild(kbd)
+            }     
+        }
+
+		
+			
+        //监听键盘    
+        listenToUser(hash)
+
+
+        //函数
+
+         function getFromLocalStorage(name){
+            return JSON.parse(localStorage.getItem(name) || 'null')
+		}
+
+        function tag(tagName){
+			return document.createElement(tagName) 
+		}
+
+        function createSpan(textContent){
+			var span = tag('span')
+			span.textContent = textContent
+			span.className = "text"
+			return span
+		}
+
+        function createButton(id){
+			var button = tag('button')
+			button.textContent = '编辑'
+			button.id = id
+			button.onclick = function(abc){
+				// abc['target'] 就是用户点击的元素
+				var button2 = abc['target']
+				var img2 = button2.previousSibling
+				var key = button2['id'] // q w e r t
+				var x = prompt('给我一个网址') // qq.com
+				hash[key] = x  // hash 变更
+				img2.src = 'http://'+ x + '/favicon.ico'
+				img2.onerror = function(xxx){
+					xxx.target.src = 'https://i.loli.net/2018/08/23/5b7ec32ae4ea7.png'
+				}
+				localStorage.setItem('zzz', JSON.stringify(hash))
+			}
+			return button
+		} 
+
+        function createImage(domain){
+			var img = tag('img')
+			if(domain){
+				img.src = 'http://'+ domain + '/favicon.ico'
+			}else{
+				img.src = 'https://i.loli.net/2018/08/23/5b7ec32ae4ea7.png'
+			}
+			img.onerror = function(xxx){
+				xxx.target.src = 'https://i.loli.net/2018/08/23/5b7ec32ae4ea7.png'
+			}
+			return img
+		} 
+        
+        function init(){
+			var keys = {
+				'0': {0:'q',1:'w',2:'e',3:'r',4:'t',5:'y',6:'u',7:'i',8:'o',9:'p',length:10},
+				'1': {0:'a',1:'s',2:'d',3:'f',4:'g',5:'h',6:'j',7:'k',8:'l',length:9},
+				'2': {0:'z',1:'x',2:'c',3:'v',4:'b',5:'n',6:'m',length:7},
+				'length': 3
+			}
+			var hash = {'q': 'qq.com', 'w': 'weibo.com', 'e': 'ele.me', 't': 'tencent.com', 'y': 'youtube.com',  'i': 'iqiyi.com', 'o': 'opera.com','x':'xiedaimala.com','p': 'sports.pptv.com/', 'a': 'acfun.tv', 's': 'sohu.com', 'z': 'zhihu.com', 'm': 'developer.mozilla.org',
+                 'b':'baidu.com','c':'cctv.com','d':'www.dribbble.com','r':'javascript.ruanyifeng.com'}
+            
+			return {
+				"keys": keys,
+				"hash": hash
+			}
+		} 
+
+        function listenToUser(hash){
+            document.onkeypress = function(efg){
+            var key = efg['key'] // q w e
+            var website = hash[key]
+            //location.href = 'http://'+website
+            window.open('http://'+website, '_blank')
+			}
+		} 
+
+     
+        
+            
+    </script> 
+</body>
+</html>
